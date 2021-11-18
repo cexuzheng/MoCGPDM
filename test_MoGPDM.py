@@ -23,10 +23,7 @@ d = 5                  # set the size of the latent space
 
 save_folder = 'model/'
 
-#  	only if you want to save some videos of the performance
 
-#	Writer = animation.writers['ffmpeg']
-#	writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
 
 
 dtype=torch.float64
@@ -108,7 +105,7 @@ for which in range(n_t):
     errors[which, :] = 100*np.linalg.norm(Y_hat3-Y_list_1[which], axis = 1)/np.linalg.norm(Y_list_1[which], axis = 1)
 
 
-#	chech if there are some failed predictions
+#	check if there are some failed predictions
 idx = np.where( np.isnan(errors) )
 for a in range(idx[0].shape[0]):
     errors[idx[0][a], idx[1][a]] = errors[idx[0][a], idx[1][a]-1]
@@ -122,7 +119,7 @@ s_1 = np.sqrt(np.sum( (np.mean(m_1)-errors_1)**2)/(len(Y_list_1[0])*Y_list_1[0].
 
 #		show performance
 
-xx = np.arange(X_list_1[0].shape[0])
+xx = np.arange(Y_list_1[0].shape[0])
 
 plt.figure(1)
 plt.errorbar(xx,mean_errors_1, yerr = std_1, fmt = 'or', linewidth = 1, ms = 2)
@@ -154,6 +151,7 @@ def update_line_with_test(i, Yhat1, line1, Ytest1, line_test1):
     return line1
 
 
+# choose the prediction that you want
 
 which = np.random.choice(len(model.controls_list ) )
 ###
@@ -184,8 +182,12 @@ plt.legend(['predicted', 'reference'])
 line_ani = animation.FuncAnimation(
     fig, update_line_with_test, len(Yhat1), fargs=(Yhat1, line1, Ytest1, line_test1), interval=10,save_count = 1000)
 
+
+#   only if you want to save some videos of the performance
 try:
-	line_ani.save('images/compare_i_'+str(which)+'rollout_.mp4', writer=writer)
+    #   Writer = animation.writers['ffmpeg']
+    #   writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
+	line_ani.save('rollout_.mp4', writer=writer)
 except:
 	pass
 
