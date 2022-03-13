@@ -45,7 +45,7 @@ for i in range(41):
 
 
 
-    # define the model 
+    # define the model, set the parameters to the MoGPDM class
 
 D = 192
 u_dim = 6
@@ -56,7 +56,9 @@ param_dict['u_dim'] = u_dim
 param_dict['N_max'] = 450
 model = MoGPDM(**param_dict)
 
-	# set some pre-trained weights for a better training performance (you may need other weights for different set of data)
+	# set some pre-trained weights for a better training performance (you 
+    # may need other weights for different set of data). These weights can 
+    # be obtained by using the train_Gates() function after defining the model
 
 model.map_cluster_kernel_length = torch.nn.Parameter(torch.tensor([27.7606, 23.0840, 21.5175, 20.5224, 20.5270] ,dtype=model.dtype, device=model.device))
 model.latent_cluster_kernel_length = torch.nn.Parameter(torch.tensor([73.0439, 44.8699, 49.7291, 34.5981, 35.1434, 72.5992, 45.6354, 50.0329,
@@ -84,7 +86,10 @@ for i in training_set.astype(int):
     model.add_data(Y_data,U_data)
 
 
-# init model makes a few trainings to search for stable configurations (sometimes it finds singular kernels)
+# init model makes a few trainings to search for stable configurations (sometimes it finds 
+# singular kernels due to the proximity of some points in the latent space)
+
+
 
 keep_trying = True
 init_loss = 0
@@ -103,6 +108,12 @@ while keep_trying:
     except:
         pass
 
+'''
+# uncoment these lines if you want to train your own gates weights
+model.train_Gates( num_opt_steps = 10, num_print_steps = 1, lr=0.01, balance=100)
+model.train_Gates( num_opt_steps = 100, num_print_steps = 1, lr=0.001, balance=100)
+
+'''
     # 	start the training
 
 loss_tracking = [init_loss]
